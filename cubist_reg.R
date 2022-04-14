@@ -3,6 +3,7 @@
 library(dplyr)
 library(caret)
 library(data.table)
+library(mltools)
 library(summarytools)
 
 # Working directory
@@ -47,17 +48,19 @@ cub_m<-train(sl~.,
              data=train,
              method="cubist",
              trControl=fitControl)
+cub_m
 summary(cub_m$finalModel)
 
 # Error metrics
 #--------------
 # Train error
 results <- resamples(list(LM=lm_m,
-                          cubist = cub_m)) 
+                          Cubist = cub_m)) 
+dotplot(results,metric = "RMSE")
+bwplot(results)
 bwplot(results,metric = "RMSE")
 bwplot(results,metric = "MAE")
 bwplot(results,metric = "Rsquared")
-dotplot(results,metric = "RMSE")
 
 # Test error 
 model<-c("lm_m","cub_m")
@@ -69,4 +72,4 @@ for(i in 1:2){
 }
 dlr<-do.call("rbind",lr) %>% as.data.frame()
 row.names(dlr)<-c("LM","Cubist")
-
+dlr
